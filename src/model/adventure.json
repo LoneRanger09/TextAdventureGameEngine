@@ -1,0 +1,52 @@
+{
+  "playerStart": "Cave Entrance",
+
+  "items": [
+    {
+      "name": "rusty key",
+      "description": "An old rusty key covered with dust."
+    },
+    {
+      "name": "torch",
+      "description": "A wooden torch that can light up dark places."
+    },
+    {
+      "name": "ancient coin",
+      "description": "A mysterious coin from an ancient civilization."
+    }
+  ],
+
+  "rooms": [
+    {
+      "name": "Cave Entrance",
+      "description": "You stand at the mouth of a dark, damp cave. A chill wind blows from within. Sunlight barely reaches this place.",
+      "exits": {
+        "north": "Dark Tunnel"
+      },
+      "items": [
+        "rusty key"
+      ]
+    },
+    {
+      "name": "Dark Tunnel",
+      "description": "The tunnel is cold and almost completely dark. Water drips from the ceiling, and strange echoes surround you.",
+      "exits": {
+        "south": "Cave Entrance",
+        "north": "Underground Lake"
+      },
+      "items": [
+        "torch"
+      ]
+    },
+    {
+      "name": "Underground Lake",
+      "description": "A beautiful underground lake stretches before you. The water is crystal clear, and faint blue light reflects from glowing crystals.",
+      "exits": {
+        "south": "Dark Tunnel"
+      },
+      "items": [
+        "ancient coin"
+      ]
+    }
+  ]
+}
