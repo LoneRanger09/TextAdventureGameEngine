@@ -2,7 +2,80 @@ package game;
 import model.Player;
 import model.Room;
 import engine.GameLoader;
+import engine.GameLoader.GameDataException;
+import java.util.Map;
+
+import com.google.gson.JsonSyntaxException;
+import java.io.IOException;
 
 public class Game {
-    
+
+    private Map<String, Room> rooms;
+    private Player player;
+    private final GameLoader gameLoader;
+
+    public Game() {
+        this.gameLoader = new GameLoader();
+        System.out.println("Game object created. GameLoader is ready.");
+    }
+
+    public void initialize(String dataFilePath) throws IOException, JsonSyntaxException, GameDataException, IllegalArgumentException {
+        System.out.println("----------------------------------------");
+        System.out.println("Initializing game from data file: " + dataFilePath + "...");
+        System.out.println("----------------------------------------");
+
+        System.out.println("[Initialize] Calling GameLoader.loadGameData()...");
+        gameLoader.loadGameData(dataFilePath);
+        System.out.println("[Initialize] Game data loaded successfully by GameLoader.");
+        System.out.println("----------------------------------------");
+
+
+        Map<String, Room> loadedRoomsMap = gameLoader.getLoadedRooms();
+        System.out.println("[Initialize] Retrieving loaded rooms from GameLoader...");
+        if (loadedRoomsMap == null || loadedRoomsMap.isEmpty()) {
+            throw new GameDataException("Initialization failed: GameLoader returned null or empty rooms map after successful load.");
+        }
+
+        this.rooms = loadedRoomsMap;
+        System.out.println("[Initialize] Rooms map populated in Game instance. Total rooms loaded: " + this.rooms.size());
+
+        this.player = new Player();
+
+        String startRoomName = gameLoader.getPlayerStartRoomName();
+        this.player.setCurrentRoomName(startRoomName);
+
+        if (startRoomName == null || !this.rooms.containsKey(startRoomName)) {
+            throw new GameDataException("Initialization failed: Player starting room '" + startRoomName +
+                    "' (specified in JSON) does not correspond to any loaded room. Check JSON data integrity.");
+          }
+
+        System.out.println("[Initialize] Start room name '" + startRoomName + "' confirmed to exist in loaded rooms.");
+        this.player.setCurrentRoomName(startRoomName);
+        System.out.println("[Initialize] Player's current room set to: '" + this.player.getCurrentRoomName() + "'");
+
+        System.out.println("[Initialize] Player object created.");
+        System.out.println("----------------------------------------");
+        System.out.println("Game initialization complete!");
+        System.out.println("Player is ready at location: " + this.player.getCurrentRoomName());
+        System.out.println("----------------------------------------");
+    }
+    public Room getRoom(String roomName){
+        if (this.rooms == null){
+            System.err.println("Warning: Attempted to getRoom('" + roomName + "') but the game rooms map is not initialized.");
+            return null;
+        }
+        return this.rooms.get(roomName);
+    }
+    public Room getCurrentRoom() {
+        if (this.player == null) {
+            System.err.println("Warning: Attempted to getCurrentRoom but the player object is not initialized.");
+            return null;
+        }
+        String currentRoomName = this.player.getCurrentRoomName();
+        if (currentRoomName == null) {
+            System.err.println("Warning: Attempted to getCurrentRoom but the player's current room name is null.");
+            return null;
+        }
+        return getRoom(currentRoomName);
+    }
 }
